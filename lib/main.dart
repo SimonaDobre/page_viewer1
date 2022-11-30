@@ -37,7 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<String> images = <String>[];
 
   final List<List<String>> genre = <List<String>>[];
-  final List<double>? rating = <double>[];
+  final List<num>? rating = <num>[];
 
   @override
   void initState() {
@@ -46,21 +46,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void getMovies() {
-    get(Uri.parse('https://yts.mx/api/v2/list_movies.json'))
-        .then((Response response) {
-      final Map<String, dynamic> list1 =
-          jsonDecode(response.body) as Map<String, dynamic>;
+    get(Uri.parse('https://yts.mx/api/v2/list_movies.json')).then((Response response) {
+      final Map<String, dynamic> list1 = jsonDecode(response.body) as Map<String, dynamic>;
       final Map<String, dynamic> list2 = list1['data'] as Map<String, dynamic>;
-      final List<Map<dynamic, dynamic>> moviesList =
-          List<Map<dynamic, dynamic>>.from(list2['movies'] as List<dynamic>);
+      final List<Map<dynamic, dynamic>> moviesList = List<Map<dynamic, dynamic>>.from(list2['movies'] as List<dynamic>);
 
       for (int i = 0; i < moviesList.length; i++) {
         final Map<dynamic, dynamic> currentMovie = moviesList[i];
 
         titlesList.add(currentMovie['title'] as String);
         images.add(currentMovie['medium_cover_image'] as String);
-        genre.add(currentMovie['genres'] as List<String>);
-        rating?.add(currentMovie['rating'] as double);
+        genre.add(List<String>.from(currentMovie['genres'] as List<dynamic>));
+        rating?.add(currentMovie['rating'] as num);
       }
 
       setState(() {
@@ -86,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
               final String currentTitle = titlesList[index];
               final String currentImage = images[index];
               final List<String> currentGenreList = genre[index];
-              final double? currentRating = rating?[index];
+              final num? currentRating = rating?[index];
 
               return Column(
                 children: <Widget>[
@@ -104,10 +101,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   Row(
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.all(38),
+                        padding: const EdgeInsets.all(38),
                         child: Text(
                           '$currentRating',
-                          style: TextStyle(fontSize: 40),
+                          style: const TextStyle(fontSize: 40),
                         ),
                       ), //$currentRating
                       const Padding(
@@ -127,7 +124,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     ],
                   ),
                   ElevatedButton(
-                      onPressed: () {}, child: const Text('Buy Tickets'))
+                    onPressed: () {},
+                    child: const Text('Buy Tickets'),
+                  )
                 ],
               );
             },
